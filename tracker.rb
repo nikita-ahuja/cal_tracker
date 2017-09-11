@@ -44,9 +44,12 @@ def value_updater()
     Type 1 for Sunday, 2 for Monday, 3 for Tuesday, 4 for Wednesday, 5 for Thursday, 6 for Friday, and 7 for Saturday."
     weekday = gets.chomp.to_i
     puts "How many calories did you eat today? (If you aren't sure how many calories were in a specific food you ate, please type 'lookup' to look up the foods in our database!)"
-    $eat_value = gets.chomp
-    if $eat_value == "lookup"
+    response = gets.chomp
+    # $eat_value = gets.chomp
+    if response == "lookup"
       food_lookup()
+    elsif response.class == "Fixnum"
+      $eat_value += response
     end
     puts "How many calories have you lost today (resting and active?)"
     lostcal_value = gets.chomp
@@ -84,21 +87,22 @@ def food_lookup() #food => calorie value
    "1 cup of cereal" => 230
   }
 
-  puts "What food would you like to look up? (Ex: '1 serving broccoli')."
+  puts "What food would you like to look up? (Ex: '1 serving broccoli'). If you wouldn't like to look up any foods, type 'q'."
   input = gets.chomp
-  loop do
-  while input.to_i == 0
-    food_database.each do |food, calories|
-      if food_database.include?(input)
-        puts "#{food} is #{calories} calories. We will add that to your total for the day!"
-        $eat_value += food[calories.to_i]
-        puts "Your current calorie value for the day is #{$eat_value}. If you would like to add more, please enter a calorie number now. If you would like to lookup another item, type the entry."
-        input = gets.chomp
-      else # if the database doesnt include the food
-      puts "Sorry that food is not in our database! Feel free to refer to the web or make an educated guess. When you come to a conclusion, enter the appropriate amount of calories."
-      $eat_value += gets.chomp.to_i
-      end
-    end
+  #loop do
+    while input != 'q'
+      food_database.each do |food, calories|
+        if food_database.include? input
+          # input_cals = food_database[food]
+          puts "#{input} is #{food_database[input]} calories. We will add that to your total for the day!"
+          $eat_value += calories.to_i
+          puts "Your current calorie value for the day is #{$eat_value}. If you would like to add more, please enter a calorie number now. If you would like to lookup another item, type the entry."
+          input = gets.chomp
+        else # if the database doesnt include the food
+        puts "Sorry that food is not in our database! Feel free to refer to the web or make an educated guess. When you come to a conclusion, enter the appropriate amount of calories."
+        $eat_value += gets.chomp.to_i
+        end
+    #end
   end
 end
 
