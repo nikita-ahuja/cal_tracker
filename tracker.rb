@@ -45,11 +45,11 @@ def value_updater()
     weekday = gets.chomp.to_i
     puts "How many calories did you eat today? (If you aren't sure how many calories were in a specific food you ate, please type 'lookup' to look up the foods in our database!)"
     response = gets.chomp
-    # $eat_value = gets.chomp
+    $eat_value = 0
     if response == "lookup"
       food_lookup()
-    elsif response.class == "Fixnum"
-      $eat_value += response
+    else #response.class == Fixnum
+      $eat_value += response.to_i
     end
     puts "How many calories have you lost today (resting and active?)"
     lostcal_value = gets.chomp
@@ -65,7 +65,7 @@ def value_updater()
           wo_value = gets.chomp
         end
       end
-    if $eat_value < lostcal_value
+    if $eat_value.to_i < lostcal_value.to_i
       def_bool = "true"
     else
       def_bool = "false"
@@ -79,7 +79,7 @@ def food_lookup() #food => calorie value
   {"1 apple" => 90,
    "1 orange" => 80,
    "1 serving broccoli" => 100,
-   "1 cup of soup" => 100..300,
+   "1 cup of soup" => 300,
    "1 serving Nature Valley granola bars" => 190,
    "1 serving salmon (grilled)" => 250,
    "1 serving salmon (pan fried)" => 650,
@@ -95,7 +95,7 @@ def food_lookup() #food => calorie value
         if food_database.include? input
           # input_cals = food_database[food]
           puts "#{input} is #{food_database[input]} calories. We will add that to your total for the day!"
-          $eat_value += calories.to_i
+          $eat_value += food_database[input]
           puts "Your current calorie value for the day is #{$eat_value}. If you would like to add more, please enter a calorie number now. If you would like to lookup another item, type the entry."
           input = gets.chomp
         else # if the database doesnt include the food
