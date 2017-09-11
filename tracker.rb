@@ -41,32 +41,78 @@ SQL
 
 $db_tracker.execute(create_cal_tracker)
 
-
 def value_updater()
     puts "Update your statistics for the day!"
-    puts "How many calories did you eat today? If you aren't sure how many calories you ate, "
-    eat_value = gets.chomp.to_i
-    $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten) VALUES (?)", [eat_value])
+    puts "How many calories did you eat today? (If you aren't sure how many calories were in a specific food you ate, please type 'lookup' to look up the foods in our database!)"
+    $eat_value = gets.chomp
+    if $eat_value == "lookup"
+      food_lookup()
+    else
+      $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten) VALUES (?)", [$eat_value.to_i])
+    end
     puts "How many calories have you lost today (resting and active?)"
-    lostcal_value = gets.chomp.to_i
-    $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten) VALUES (?)", [lostcal_value])
+    lostcal_value = gets.chomp
+    $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten) VALUES (?)", [lostcal_value.to_i])
     puts "Have you worked out today (y/n)?"
     wo_value = gets.chomp.to_s
       if wo_value == "y"
           $db_tracker.execute("INSERT INTO cal_tracker(worked_out) VALUES (?)", ["true"])
-          # break
       elsif wo_value == "n"
         $db_tracker.execute("INSERT INTO cal_tracker (worked_out) VALUES (?)", ["false"])
-        # break
       else
         while wo_value != "y" || "n"
           puts "Please enter either 'y' or 'n'"
-          wo_value = gets.chomp.to_s
-        end
+          wo_value = gets.chomp
+      end
+    end
+end
+
+def food_lookup() #food => calorie value
+   food_database =
+  {"1 apple" => 90,
+   "1 orange" => 80,
+   "1 serving broccoli" => 100,
+   "1 cup of soup" => 100..300,
+   "1 serving Nature Valley granola bars" => 190,
+   "1 serving salmon (grilled)" => 250,
+   "1 serving salmon (pan fried)" => 650,
+   "1 cup of rice" => 200,
+   "1 cup of cereal" => 230
+  }
+
+  puts "What food would you like to look up? (Ex: '1 serving broccoli')."
+  input = gets.chomp
+  loop do
+  while input.to_i == 0
+    food_database.each do |food, calories|
+      if food_database.include?(input)
+        puts "#{food} is #{calories} calories. We will add that to your total for the day!"
+        $eat_value += food[calories.to_i]
+        puts "Your current calorie value for the day is #{$eat_value}. If you would like to add more, please enter a calorie number now. If you would like to lookup another item, type the entry."
+        input = gets.chomp
+      else # if the database doesnt include the food
+      puts "Sorry that food is not in our database! Feel free to refer to the web or make an educated guess. When you come to a conclusion, enter the appropriate amount of calories."
+      $eat_value += gets.chomp.to_i
+      end
+    end
   end
 end
 
-def food_cal_lookup(food)
+end
+
+
+
+
+
+
+
+
+
+
+  # look up the food in the hash
+  # if it is in the hash, make eat_value == to the calories associated with the food
+  #if the food is not in the database, say it's not and to make an educated guess
+
 
 # puts <<-STRING
 #   Update your statistics for the day!:
