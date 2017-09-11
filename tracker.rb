@@ -29,13 +29,13 @@ $db_tracker = SQLite3::Database.new("cal_tracker.db")
 create_cal_tracker = <<-SQL
   CREATE TABLE IF NOT EXISTS cal_tracker(
     id INTEGER PRIMARY KEY,
-    weekday INT,
+    weekday_id INT,
     cals_eaten INT,
     cals_remaining INT,
     cals_lost INT,
     deficit BOOLEAN,
     worked_out BOOLEAN,
-    FOREIGN KEY(weekday) REFERENCES days(id)
+    FOREIGN KEY(weekday_id) REFERENCES days(id)
   )
 SQL
 
@@ -43,13 +43,15 @@ $db_tracker.execute(create_cal_tracker)
 
 def value_updater()
     puts "Update your statistics for the day!"
+    # puts "Whats the day of the week?"
+    #   weekday = gets.chomp
     puts "How many calories did you eat today? (If you aren't sure how many calories were in a specific food you ate, please type 'lookup' to look up the foods in our database!)"
     $eat_value = gets.chomp
     if $eat_value == "lookup"
       food_lookup()
-    else
-      $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten) VALUES (?)", [$eat_value.to_i])
     end
+    remaining = (1500 - $eat_value.to_i)
+    puts "You have #{remaining} calories remaining for the day since you are on a 1500 calorie diet."
     puts "How many calories have you lost today (resting and active?)"
     lostcal_value = gets.chomp
     puts "Have you worked out today (y/n)?"
@@ -64,8 +66,13 @@ def value_updater()
           wo_value = gets.chomp
         end
       end
+    if $eat_value < lostcal_value
+      def_bool = "true"
+    else
+      def_bool = "false"
+    end
 
-    $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten, cals_lost, worked_out) VALUES (?, ?, ?)", [$eat_value.to_i, lostcal_value.to_i, wo_bool])
+    $db_tracker.execute("INSERT INTO cal_tracker(weekday, cals_eaten, cals_lost, deficit, worked_out) VALUES (?, ?, ?, ?, ?)", [$eat_value.to_i, remaining.to_i, lostcal_value.to_i, def_bool, wo_bool])
 end
 
 def food_lookup() #food => calorie value
