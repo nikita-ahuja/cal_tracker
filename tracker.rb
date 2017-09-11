@@ -52,19 +52,20 @@ def value_updater()
     end
     puts "How many calories have you lost today (resting and active?)"
     lostcal_value = gets.chomp
-    $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten) VALUES (?)", [lostcal_value.to_i])
     puts "Have you worked out today (y/n)?"
     wo_value = gets.chomp.to_s
       if wo_value == "y"
-          $db_tracker.execute("INSERT INTO cal_tracker(worked_out) VALUES (?)", ["true"])
+        wo_bool = "true"
       elsif wo_value == "n"
-        $db_tracker.execute("INSERT INTO cal_tracker (worked_out) VALUES (?)", ["false"])
+        wo_bool = "false"
       else
         while wo_value != "y" || "n"
           puts "Please enter either 'y' or 'n'"
           wo_value = gets.chomp
+        end
       end
-    end
+
+    $db_tracker.execute("INSERT INTO cal_tracker(cals_eaten, cals_lost, worked_out) VALUES (?, ?, ?)", [$eat_value.to_i, lostcal_value.to_i, wo_bool])
 end
 
 def food_lookup() #food => calorie value
