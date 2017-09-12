@@ -87,23 +87,26 @@ def food_lookup() #food => calorie value
    "1 cup of cereal" => 230
   }
 
-  puts "What food would you like to look up? (Ex: '1 serving broccoli'). If you wouldn't like to look up any foods, type 'q'."
-  input = gets.chomp
-  #loop do
-    while input != 'q'
+  loop do
+    puts "What food would you like to look up? (Ex: '1 serving broccoli'). If you wouldn't like to look up any foods, type 'q'."
+    input = gets.chomp
+    break if input == "q"
       food_database.each do |food, calories|
         if food_database.include? input
-          # input_cals = food_database[food]
           puts "#{input} is #{food_database[input]} calories. We will add that to your total for the day!"
           $eat_value += food_database[input]
-          puts "Your current calorie value for the day is #{$eat_value}. If you would like to add more, please enter a calorie number now. If you would like to lookup another item, type the entry."
+          puts "Your current calorie value for the day is #{$eat_value}. If you would like to lookup another item, type the entry. If you are finished looking up items, enter 'q'."
           input = gets.chomp
+          break if input == "q"
+    break if input == "q"
         else # if the database doesnt include the food
-        puts "Sorry that food is not in our database! Feel free to refer to the web or make an educated guess. When you come to a conclusion, enter the appropriate amount of calories."
-        $eat_value += gets.chomp.to_i
+          puts "Sorry that food is not in our database! Please enter another item or enter 'q' if you are finished."
+          input = gets.chomp
+          break if input == "q"
+    break if input == "q"
         end
-    #end
   end
+
 end
 
 end
